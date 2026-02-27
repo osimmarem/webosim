@@ -1789,7 +1789,7 @@
     <ul class="info-list"> 
      <li><i class="fas fa-envelope"></i> osimmamaarifrembang@gmail.com</li> 
      <li><i class="fab fa-instagram"></i> @osim.mamrembang</li> 
-     <li><i class="fab fa-tiktok"></i> @osim.mamrembangpas</li> 
+     <li><i class="fab fa-tiktok"></i> @osim.resmi</li> 
      <li><i class="fab fa-whatsapp"></i> +62 838-4833-2165</li> 
     </ul> 
    </div> 
@@ -1895,7 +1895,7 @@
             <div class="struktur-icon"><i class="fas fa-sitemap"></i></div>
             <h2>Struktur Organisasi</h2>
         </div>
-        <p class="struktur-text">Dipimpin oleh Pengurus Inti (Ketua, Wakil, Sekretaris, Bendahara). Didukung Bidang Khusus (Humas, IT, Kedisiplinan) dan berbagai Divisi.</p>
+        <p class="struktur-text">Dipimpin oleh Pengurus Inti (Ketua, Wakil Ketua, Sekretaris 1, Sekretaris 2, Bendahara 1, Bendahara 2). Didukung Bidang Khusus dan Divisi-Divisi dengan Koordinator + Anggota.</p>
         <div class="struktur-buttons">
             <button class="btn-primary" onclick="window.showPage('profil')"><i class="fas fa-user-friends"></i> Lihat Struktur</button>
             <button class="btn-outline" onclick="window.showPage('proker')"><i class="fas fa-list-check"></i> Program Kerja</button>
@@ -1914,7 +1914,7 @@
   </div> 
 </div>
 
-<!-- PROGRAM KERJA PAGE - TANPA GAMBAR, BADGE DI BAWAH -->
+<!-- PROGRAM KERJA PAGE -->
 <div id="proker-page" class="page-content"> 
    <div class="container">
     
@@ -2090,7 +2090,7 @@
    </div>
 </div>
 
-<!-- PROFIL PAGE - TANPA TOMBOL KEMBALI -->
+<!-- PROFIL PAGE - DENGAN DIVISI (KOORDINATOR + ANGGOTA) -->
 <div id="profil-page" class="page-content"> 
    <div class="container">
     
@@ -2106,7 +2106,7 @@
       <div class="kategori-card" onclick="window.showCategory('inti')">
           <div class="kategori-icon" style="background: linear-gradient(145deg, #1E40AF, #3B82F6);"><i class="fas fa-crown"></i></div>
           <h3>Pengurus Inti</h3>
-          <p>Pimpinan tertinggi OSIM</p>
+          <p>Ketua, Wakil, Sekretaris 1 & 2, Bendahara 1 & 2</p>
           <div class="kategori-link"><i class="fas fa-arrow-right"></i> Klik detail</div>
       </div>
       
@@ -2122,12 +2122,12 @@
       <div class="kategori-card" onclick="window.showCategory('divisi')">
           <div class="kategori-icon" style="background: linear-gradient(145deg, #10B981, #059669);"><i class="fas fa-sitemap"></i></div>
           <h3>Divisi</h3>
-          <p>Unit operasional OSIM</p>
+          <p>Koordinator + Anggota (Bela Negara, Keagamaan, Multimedia, dll)</p>
           <div class="kategori-link" style="color: #10B981;"><i class="fas fa-arrow-right"></i> Klik detail</div>
       </div>
     </div>
     
-    <!-- AREA DETAIL - TANPA TOMBOL KEMBALI -->
+    <!-- AREA DETAIL -->
     <div id="category-detail-area"></div>
     
     <!-- TOMBOL AKSI -->
@@ -2154,7 +2154,10 @@
     </div>
 </div>
 
-<footer>© 2026 MEDIA OSIM. Hak Cipta Dilindungi.</footer>
+<!-- TOMBOL DEBUG -->
+<footer>© 2026 MEDIA OSIM. Hak Cipta Dilindungi. 
+    <button onclick="window.debugData()" style="margin-left: 15px; background: none; border: 1px solid; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem;">Debug</button>
+</footer>
 
 <!-- SCRIPT -->
 <script>
@@ -2164,6 +2167,16 @@
     window.pengurusData = {};
     window.firebaseEvents = {};
     window.notificationEmails = JSON.parse(localStorage.getItem('notification_emails') || '[]');
+
+    // ===== URUTAN JABATAN PENGURUS INTI =====
+    const urutanJabatanInti = {
+        'ketua_osim': 1,
+        'wakil_ketua': 2,
+        'sekertaris_1': 3,
+        'sekertaris_2': 4,
+        'bendahara_1': 5,
+        'bendahara_2': 6
+    };
 
     // === FUNGSI NAVIGASI ===
     window.toggleMenu = function() {
@@ -2292,8 +2305,11 @@
         
         for (let i = 0; i < firstDay; i++) {
             const emptyDay = document.createElement('div');
+            emptyDay.className = 'day';
             emptyDay.style.background = 'transparent';
-            emptyDay.style.padding = '12px 8px';
+            emptyDay.style.boxShadow = 'none';
+            emptyDay.style.border = 'none';
+            emptyDay.style.cursor = 'default';
             grid.appendChild(emptyDay);
         }
         
@@ -2307,14 +2323,13 @@
                 day.classList.add('today');
             }
             
-            const key = `${year}-${month + 1}-${d}`;
-            if (window.firebaseEvents?.[key]) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            
+            if (window.firebaseEvents && window.firebaseEvents[dateStr]) {
                 day.classList.add('event');
-                const events = window.firebaseEvents[key];
-                const eventList = Array.isArray(events) ? events : [events];
+                const event = window.firebaseEvents[dateStr];
                 day.onclick = () => {
-                    const names = eventList.map(e => e.name || e);
-                    alert(`Kegiatan: ${names.join(', ')}`);
+                    alert(`📅 Kegiatan: ${event.name}\n⏰ Waktu: ${event.time || '-'}\n📍 Lokasi: ${event.location || '-'}\n📝 ${event.description || ''}`);
                 };
             }
             
@@ -2322,7 +2337,7 @@
         }
     };
 
-    // === SHOW CATEGORY - TANPA TOMBOL KEMBALI ===
+    // === SHOW CATEGORY ===
     window.showCategory = function(category) {
         document.querySelectorAll('.kategori-card').forEach(c => c.classList.remove('active'));
         const clickedCard = event?.target?.closest('.kategori-card');
@@ -2333,11 +2348,11 @@
         
         let config = {};
         if (category === 'inti') {
-            config = { title: 'Pengurus Inti', color: '#1E40AF', icon: 'fa-crown', bgGradient: 'linear-gradient(145deg, #1E40AF, #3B82F6)', desc: 'Pimpinan tertinggi OSIM', dataId: 'pengurus-inti-content' };
+            config = { title: 'Pengurus Inti', color: '#1E40AF', icon: 'fa-crown', bgGradient: 'linear-gradient(145deg, #1E40AF, #3B82F6)', desc: 'Pimpinan tertinggi OSIM (urutan: Ketua → Wakil → Sekretaris 1 → Sekretaris 2 → Bendahara 1 → Bendahara 2)', dataId: 'pengurus-inti-content' };
         } else if (category === 'khusus') {
             config = { title: 'Bidang Khusus', color: '#C5A059', icon: 'fa-star', bgGradient: 'linear-gradient(145deg, #C5A059, #EAB308)', desc: 'Tim dengan fungsi strategis', dataId: 'pengurus-khusus-content' };
         } else if (category === 'divisi') {
-            config = { title: 'Divisi', color: '#10B981', icon: 'fa-sitemap', bgGradient: 'linear-gradient(145deg, #10B981, #059669)', desc: 'Unit operasional OSIM', dataId: 'pengurus-divisi-content' };
+            config = { title: 'Divisi', color: '#10B981', icon: 'fa-sitemap', bgGradient: 'linear-gradient(145deg, #10B981, #059669)', desc: 'Setiap divisi memiliki 1 Koordinator + banyak Anggota', dataId: 'pengurus-divisi-content' };
         }
         
         detailArea.innerHTML = `
@@ -2349,7 +2364,7 @@
                         <p style="opacity: 0.7; font-size: 0.9rem; margin: 3px 0 0;">${config.desc}</p>
                     </div>
                 </div>
-                <div id="${config.dataId}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;"></div>
+                <div id="${config.dataId}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;"></div>
             </div>
         `;
         
@@ -2357,7 +2372,6 @@
         else if (category === 'khusus' && window.renderPengurusKhusus) window.renderPengurusKhusus();
         else if (category === 'divisi' && window.renderPengurusDivisi) window.renderPengurusDivisi();
         
-        // Scroll ke detail area
         setTimeout(() => {
             detailArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
@@ -2430,6 +2444,23 @@
     window.getInitials = function(name) {
         if (!name) return '??';
         return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    };
+
+    // === FUNGSI DEBUG ===
+    window.debugData = function() {
+        console.log('=== DATA PENGURUS ===');
+        console.log(window.pengurusData);
+        
+        console.log('=== DATA EVENTS ===');
+        console.log(window.firebaseEvents);
+        
+        console.log('=== DATA PROKER ===');
+        console.log(window.prokerData);
+        
+        console.log('=== DATA ANNOUNCEMENTS ===');
+        console.log(window.announcementsData);
+        
+        alert('✅ Cek console browser (F12) untuk melihat data');
     };
 
     // === INITIALIZE FIREBASE ===
@@ -2505,19 +2536,25 @@
             // EVENTS
             onValue(ref(db, 'events'), (snapshot) => {
                 window.firebaseEvents = snapshot.val() || {};
+                console.log('Events loaded:', window.firebaseEvents);
                 
                 const upcomingList = document.getElementById('upcoming-events-list');
                 if (upcomingList) {
                     upcomingList.innerHTML = '';
                     const today = new Date();
+                    today.setHours(0, 0, 0, 0);
                     const upcoming = [];
                     
                     Object.entries(window.firebaseEvents).forEach(([dateStr, eventData]) => {
-                        const eventDate = new Date(dateStr);
+                        const [year, month, day] = dateStr.split('-').map(Number);
+                        const eventDate = new Date(year, month - 1, day);
+                        
                         if (eventDate >= today) {
                             upcoming.push({ 
                                 date: dateStr, 
-                                name: eventData.name || (Array.isArray(eventData) ? eventData[0] : eventData),
+                                name: eventData.name || 'Kegiatan OSIM',
+                                time: eventData.time || '',
+                                location: eventData.location || '',
                                 description: eventData.description || ''
                             });
                         }
@@ -2529,13 +2566,17 @@
                         upcoming.slice(0, 5).forEach(item => {
                             const li = document.createElement('li');
                             li.className = 'event-item';
-                            li.onclick = () => { alert(\`Kegiatan: \${item.name}\`); };
+                            li.onclick = () => { 
+                                alert(\`📅 Kegiatan: \${item.name}\n⏰ Waktu: \${item.time || '-'}\n📍 Lokasi: \${item.location || '-'}\n📝 \${item.description || ''}\`); 
+                            };
+                            
+                            const displayDate = new Date(item.date).toLocaleDateString('id-ID', { day:'numeric', month:'long' });
                             
                             li.innerHTML = \`
                                 <i class="fas fa-calendar-day"></i>
                                 <div class="event-info">
                                     <div class="event-name">\${item.name}</div>
-                                    <div class="event-date">\${new Date(item.date).toLocaleDateString('id-ID', { day:'numeric', month:'long' })}</div>
+                                    <div class="event-date">\${displayDate} \${item.time ? '• ' + item.time : ''}</div>
                                 </div>
                                 <button class="btn-remind" onclick="event.stopPropagation(); window.showEventNotificationDialog();"><i class="fas fa-bell"></i></button>
                             \`;
@@ -2627,98 +2668,188 @@
         document.head.appendChild(script);
     }
 
-    // === RENDER PENGURUS ===
+    // === RENDER PENGURUS INTI (URUT) ===
     window.renderPengurusInti = function() {
         const container = document.getElementById('pengurus-inti-content');
         if (!container || !window.pengurusData?.inti) return;
+        
         container.innerHTML = '';
-        Object.entries(window.pengurusData.inti).forEach(([posId, pos]) => {
-            const card = document.createElement('div');
-            card.className = 'position-card';
-            const members = pos.members ? Object.entries(pos.members).map(([id, m]) => `
-                <li>
-                    <div class="member-info">
-                        <div class="member-avatar">${window.getInitials(m.name)}</div>
-                        <div class="member-details">
-                            <div class="member-name">${m.name || ''}</div>
-                            <div class="member-jabatan">${posId.replace(/_/g, ' ').toUpperCase()}</div>
-                            <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
+        let hasMembers = false;
+        
+        const sortedPositions = Object.entries(window.pengurusData.inti)
+            .sort(([posA], [posB]) => {
+                return (urutanJabatanInti[posA] || 999) - (urutanJabatanInti[posB] || 999);
+            });
+        
+        sortedPositions.forEach(([posId, pos]) => {
+            if (pos.members && Object.keys(pos.members).length > 0) {
+                hasMembers = true;
+                const card = document.createElement('div');
+                card.className = 'position-card';
+                
+                const members = Object.entries(pos.members).map(([id, m]) => `
+                    <li>
+                        <div class="member-info">
+                            <div class="member-avatar">${window.getInitials(m.name)}</div>
+                            <div class="member-details">
+                                <div class="member-name">${m.name || ''}</div>
+                                <div class="member-jabatan">${posId.replace(/_/g, ' ').toUpperCase()}</div>
+                                <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
+                            </div>
                         </div>
+                        <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${posId.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
+                    </li>
+                `).join('');
+                
+                card.innerHTML = `
+                    <div class="position-header">
+                        <div class="position-icon"><i class="fas fa-crown"></i></div>
+                        <div class="position-title">${posId.replace(/_/g, ' ').toUpperCase()}</div>
                     </div>
-                    <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${posId.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
-                </li>
-            `).join('') : '<li style="justify-content:center; padding: 20px;">Tidak ada anggota</li>';
-            card.innerHTML = `
-                <div class="position-header">
-                    <div class="position-icon"><i class="fas fa-crown"></i></div>
-                    <div class="position-title">${posId.replace(/_/g, ' ').toUpperCase()}</div>
-                </div>
-                <ul class="member-list">${members}</ul>
-            `;
-            container.appendChild(card);
+                    <ul class="member-list">${members}</ul>
+                `;
+                container.appendChild(card);
+            }
         });
+        
+        if (!hasMembers) {
+            container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; opacity:0.7;">Belum ada anggota pengurus inti</div>';
+        }
     };
 
+    // === RENDER PENGURUS KHUSUS ===
     window.renderPengurusKhusus = function() {
         const container = document.getElementById('pengurus-khusus-content');
         if (!container || !window.pengurusData?.khusus) return;
+        
         container.innerHTML = '';
+        let hasMembers = false;
+        
         Object.entries(window.pengurusData.khusus).forEach(([posId, pos]) => {
-            const card = document.createElement('div');
-            card.className = 'position-card';
-            const members = pos.members ? Object.entries(pos.members).map(([id, m]) => `
-                <li>
-                    <div class="member-info">
-                        <div class="member-avatar">${window.getInitials(m.name)}</div>
-                        <div class="member-details">
-                            <div class="member-name">${m.name || ''}</div>
-                            <div class="member-jabatan">${posId.replace(/_/g, ' ').toUpperCase()}</div>
-                            <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
+            if (pos.members && Object.keys(pos.members).length > 0) {
+                hasMembers = true;
+                const card = document.createElement('div');
+                card.className = 'position-card';
+                
+                const members = Object.entries(pos.members).map(([id, m]) => `
+                    <li>
+                        <div class="member-info">
+                            <div class="member-avatar">${window.getInitials(m.name)}</div>
+                            <div class="member-details">
+                                <div class="member-name">${m.name || ''}</div>
+                                <div class="member-jabatan">${posId.replace(/_/g, ' ').toUpperCase()}</div>
+                                <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
+                            </div>
                         </div>
+                        <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${posId.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
+                    </li>
+                `).join('');
+                
+                card.innerHTML = `
+                    <div class="position-header">
+                        <div class="position-icon"><i class="fas fa-star"></i></div>
+                        <div class="position-title">${posId.replace(/_/g, ' ').toUpperCase()}</div>
                     </div>
-                    <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${posId.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
-                </li>
-            `).join('') : '<li style="justify-content:center; padding: 20px;">Tidak ada anggota</li>';
-            card.innerHTML = `
-                <div class="position-header">
-                    <div class="position-icon"><i class="fas fa-star"></i></div>
-                    <div class="position-title">${posId.replace(/_/g, ' ').toUpperCase()}</div>
-                </div>
-                <ul class="member-list">${members}</ul>
-            `;
-            container.appendChild(card);
+                    <ul class="member-list">${members}</ul>
+                `;
+                container.appendChild(card);
+            }
         });
+        
+        if (!hasMembers) {
+            container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; opacity:0.7;">Belum ada anggota bidang khusus</div>';
+        }
     };
 
+    // === RENDER DIVISI (KOORDINATOR + ANGGOTA) ===
     window.renderPengurusDivisi = function() {
         const container = document.getElementById('pengurus-divisi-content');
         if (!container || !window.pengurusData?.divisi) return;
+        
         container.innerHTML = '';
-        Object.entries(window.pengurusData.divisi).forEach(([posId, pos]) => {
-            const card = document.createElement('div');
-            card.className = 'position-card';
-            const members = pos.members ? Object.entries(pos.members).map(([id, m]) => `
-                <li>
-                    <div class="member-info">
-                        <div class="member-avatar">${window.getInitials(m.name)}</div>
-                        <div class="member-details">
-                            <div class="member-name">${m.name || ''}</div>
-                            <div class="member-jabatan">${posId.replace(/_/g, ' ').toUpperCase()}</div>
-                            <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
-                        </div>
+        let hasData = false;
+        
+        Object.entries(window.pengurusData.divisi).forEach(([divisiKey, divisiData]) => {
+            if (divisiData.members && Object.keys(divisiData.members).length > 0) {
+                hasData = true;
+                
+                const members = Object.entries(divisiData.members);
+                const koordinator = members.filter(([_, m]) => m.role === 'koordinator');
+                const anggota = members.filter(([_, m]) => m.role === 'anggota' || !m.role);
+                
+                const card = document.createElement('div');
+                card.className = 'position-card';
+                card.style.gridColumn = '1/-1';
+                
+                let html = `
+                    <div class="position-header">
+                        <div class="position-icon"><i class="fas fa-sitemap"></i></div>
+                        <div class="position-title">${divisiKey.replace(/_/g, ' ').toUpperCase()}</div>
                     </div>
-                    <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${posId.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
-                </li>
-            `).join('') : '<li style="justify-content:center; padding: 20px;">Tidak ada anggota</li>';
-            card.innerHTML = `
-                <div class="position-header">
-                    <div class="position-icon"><i class="fas fa-users"></i></div>
-                    <div class="position-title">${posId.replace(/_/g, ' ').toUpperCase()}</div>
-                </div>
-                <ul class="member-list">${members}</ul>
-            `;
-            container.appendChild(card);
+                `;
+                
+                if (koordinator.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="font-size:0.9rem; color:var(--accent-color); margin-bottom:10px;">
+                                <i class="fas fa-star" style="color:gold;"></i> Koordinator
+                            </h4>
+                            <ul class="member-list">
+                    `;
+                    
+                    koordinator.forEach(([id, m]) => {
+                        html += `
+                            <li>
+                                <div class="member-info">
+                                    <div class="member-avatar" style="background: linear-gradient(145deg, #C5A059, #EAB308); color:white;">${window.getInitials(m.name)}</div>
+                                    <div class="member-details">
+                                        <div class="member-name">${m.name || ''} <span style="font-size:0.7rem; background:gold; color:#000; padding:2px 8px; border-radius:20px;">Koordinator</span></div>
+                                        <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
+                                    </div>
+                                </div>
+                                <button class="view-detail" onclick="alert('${m.name}\\nJabatan: Koordinator ${divisiKey.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
+                            </li>
+                        `;
+                    });
+                    
+                    html += `</ul></div>`;
+                }
+                
+                if (anggota.length > 0) {
+                    html += `
+                        <div>
+                            <h4 style="font-size:0.9rem; color:var(--text-color); margin-bottom:10px;">
+                                <i class="fas fa-users"></i> Anggota (${anggota.length})
+                            </h4>
+                            <ul class="member-list" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:10px;">
+                    `;
+                    
+                    anggota.forEach(([id, m]) => {
+                        html += `
+                            <li style="border:1px solid var(--border-light); border-radius:12px; padding:10px; margin:0;">
+                                <div class="member-info">
+                                    <div class="member-avatar">${window.getInitials(m.name)}</div>
+                                    <div class="member-details">
+                                        <div class="member-name">${m.name || ''}</div>
+                                        <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
+                                    </div>
+                                </div>
+                                <button class="view-detail" onclick="alert('${m.name}\\nAnggota ${divisiKey.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}')">Detail</button>
+                            </li>
+                        `;
+                    });
+                    
+                    html += `</ul></div>`;
+                }
+                
+                card.innerHTML = html;
+                container.appendChild(card);
+            }
         });
+        
+        if (!hasData) {
+            container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; opacity:0.7;">Belum ada anggota divisi</div>';
+        }
     };
 
     // === INITIALIZE ===
@@ -2729,3 +2860,5 @@
         initializeFirebase();
     });
 </script>
+</body>
+</html>
