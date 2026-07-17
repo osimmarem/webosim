@@ -1567,6 +1567,36 @@
         color: var(--text-color);
         border: 2px solid var(--secondary-bg);
         box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .member-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .member-modal-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 20px;
+        margin: 0 auto 15px;
+        background: linear-gradient(145deg, #E2E8F0, #CBD5E1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--text-color);
+        overflow: hidden;
+        box-shadow: var(--shadow-md);
+    }
+
+    .member-modal-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .member-details {
@@ -2106,7 +2136,7 @@
     <!-- KATEGORI -->
     <div class="kategori-grid">
       <!-- INTI -->
-      <div class="kategori-card" onclick="window.showCategory('inti')">
+      <div class="kategori-card" onclick="window.showCategory('inti', event)">
           <div class="kategori-icon" style="background: linear-gradient(145deg, #1E40AF, #3B82F6);"><i class="fas fa-crown"></i></div>
           <h3>Pengurus Inti</h3>
           <p>Ketua, Wakil, Sekretaris 1 & 2, Bendahara 1 & 2</p>
@@ -2114,7 +2144,7 @@
       </div>
       
       <!-- KHUSUS -->
-      <div class="kategori-card" onclick="window.showCategory('khusus')">
+      <div class="kategori-card" onclick="window.showCategory('khusus', event)">
           <div class="kategori-icon" style="background: linear-gradient(145deg, #C5A059, #EAB308);"><i class="fas fa-star"></i></div>
           <h3>Bidang Khusus</h3>
           <p>Tim dengan fungsi strategis</p>
@@ -2122,7 +2152,7 @@
       </div>
       
       <!-- DIVISI -->
-      <div class="kategori-card" onclick="window.showCategory('divisi')">
+      <div class="kategori-card" onclick="window.showCategory('divisi', event)">
           <div class="kategori-icon" style="background: linear-gradient(145deg, #10B981, #059669);"><i class="fas fa-sitemap"></i></div>
           <h3>Divisi</h3>
           <p>Koordinator + Anggota (Bela Negara, Keagamaan, Multimedia, dll)</p>
@@ -2150,6 +2180,7 @@
             <button class="month-nav" onclick="window.closeModal()" style="width: 36px; height: 36px;">×</button>
         </div>
         <div>
+            <img id="modal-news-image" src="" alt="" style="width:100%; max-height:280px; object-fit:cover; border-radius:12px; margin-bottom:15px; display:none;">
             <span class="category" id="modal-news-category"></span>
             <div style="font-size: 0.85rem; color: var(--news-gray); margin: 10px 0;"><span id="modal-news-date"></span> | <span id="modal-news-author"></span></div>
             <div id="modal-news-content"></div>
@@ -2157,10 +2188,41 @@
     </div>
 </div>
 
-<!-- TOMBOL DEBUG -->
-<footer>© 2026 MEDIA OSIM. Hak Cipta Dilindungi. 
-    <button onclick="window.debugData()" style="margin-left: 15px; background: none; border: 1px solid; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem;">Debug</button>
-</footer>
+<!-- MODAL DETAIL KEGIATAN KALENDER -->
+<div class="modal" id="calendar-event-modal">
+    <div class="modal-content" style="max-width: 420px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="font-size: 1.2rem;" id="cal-event-name">Kegiatan</h3>
+            <button class="month-nav" onclick="window.closeCalendarEventModal()" style="width: 36px; height: 36px;">×</button>
+        </div>
+        <div style="text-align:left;">
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-clock" style="color:var(--accent-color); width:18px;"></i> <span id="cal-event-time"></span></p>
+            <p style="font-size: 0.9rem; margin-bottom: 10px;"><i class="fas fa-map-marker-alt" style="color:var(--accent-color); width:18px;"></i> <span id="cal-event-location"></span></p>
+            <p id="cal-event-desc-wrap" style="font-size: 0.9rem; opacity: 0.85;"><i class="fas fa-align-left" style="color:var(--accent-color); width:18px;"></i> <span id="cal-event-desc"></span></p>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETAIL ANGGOTA PENGURUS -->
+<div class="modal" id="member-modal">
+    <div class="modal-content" style="max-width: 420px;">
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
+            <button class="month-nav" onclick="window.closeMemberModal()" style="width: 36px; height: 36px;">×</button>
+        </div>
+        <div style="text-align:center;">
+            <div id="member-modal-avatar" class="member-modal-avatar"></div>
+            <h3 id="member-modal-name" style="font-size: 1.2rem; margin-bottom: 4px;"></h3>
+            <span class="member-jabatan" id="member-modal-jabatan" style="margin-bottom: 10px;"></span>
+            <div style="text-align:left; margin-top: 15px; border-top: 1px solid var(--border-light); padding-top: 15px;">
+                <p style="font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-graduation-cap" style="color:var(--accent-color); width:18px;"></i> <span id="member-modal-class"></span></p>
+                <p id="member-modal-contact-wrap" style="font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-phone" style="color:var(--accent-color); width:18px;"></i> <span id="member-modal-contact"></span></p>
+                <p id="member-modal-desc-wrap" style="font-size: 0.9rem; opacity: 0.8;"><i class="fas fa-info-circle" style="color:var(--accent-color); width:18px;"></i> <span id="member-modal-desc"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>© 2026 MEDIA OSIM. Hak Cipta Dilindungi.</footer>
 
 <!-- SCRIPT -->
 <script>
@@ -2380,7 +2442,7 @@
                 day.classList.add('event');
                 const event = window.firebaseEvents[dateStr];
                 day.onclick = () => {
-                    alert(`📅 Kegiatan: ${event.name}\n⏰ Waktu: ${event.time || '-'}\n📍 Lokasi: ${event.location || '-'}\n📝 ${event.description || ''}`);
+                    window.showCalendarEventDetail(event);
                 };
             }
             
@@ -2389,9 +2451,10 @@
     };
 
     // === SHOW CATEGORY ===
-    window.showCategory = function(category) {
+    window.showCategory = function(category, evt) {
         document.querySelectorAll('.kategori-card').forEach(c => c.classList.remove('active'));
-        const clickedCard = event?.target?.closest('.kategori-card');
+        const clickedCard = evt?.target?.closest('.kategori-card')
+            || Array.from(document.querySelectorAll('.kategori-card')).find(c => c.getAttribute('onclick')?.includes(`'${category}'`));
         if (clickedCard) clickedCard.classList.add('active');
         
         const detailArea = document.getElementById('category-detail-area');
@@ -2497,21 +2560,75 @@
         return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
     };
 
-    // === FUNGSI DEBUG ===
-    window.debugData = function() {
-        console.log('=== DATA PENGURUS ===');
-        console.log(window.pengurusData);
-        
-        console.log('=== DATA EVENTS ===');
-        console.log(window.firebaseEvents);
-        
-        console.log('=== DATA PROKER ===');
-        console.log(window.prokerData);
-        
-        console.log('=== DATA ANNOUNCEMENTS ===');
-        console.log(window.announcementsData);
-        
-        alert('✅ Cek console browser (F12) untuk melihat data');
+    // Menampilkan foto anggota jika tersedia, jika tidak tampilkan inisial nama
+    window.getAvatarHtml = function(m) {
+        if (m && m.photoUrl) {
+            return `<img src="${m.photoUrl}" alt="${m.name || ''}" loading="lazy">`;
+        }
+        return window.getInitials(m?.name);
+    };
+
+    // Registry sementara untuk menyimpan data anggota agar bisa ditampilkan di modal detail
+    window._memberRegistry = {};
+
+    window.showMemberDetail = function(key) {
+        const m = window._memberRegistry[key];
+        if (!m) return;
+
+        const avatar = document.getElementById('member-modal-avatar');
+        avatar.innerHTML = m.photoUrl
+            ? `<img src="${m.photoUrl}" alt="${m.name || ''}">`
+            : window.getInitials(m.name);
+
+        document.getElementById('member-modal-name').textContent = m.name || '';
+        document.getElementById('member-modal-jabatan').textContent = m.jabatan || '';
+        document.getElementById('member-modal-class').textContent = m.class || 'Kelas belum diisi';
+
+        const contactWrap = document.getElementById('member-modal-contact-wrap');
+        if (m.contact) {
+            contactWrap.style.display = '';
+            document.getElementById('member-modal-contact').textContent = m.contact;
+        } else {
+            contactWrap.style.display = 'none';
+        }
+
+        const descWrap = document.getElementById('member-modal-desc-wrap');
+        if (m.description) {
+            descWrap.style.display = '';
+            document.getElementById('member-modal-desc').textContent = m.description;
+        } else {
+            descWrap.style.display = 'none';
+        }
+
+        document.getElementById('member-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeMemberModal = function() {
+        document.getElementById('member-modal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    };
+
+    window.showCalendarEventDetail = function(event) {
+        document.getElementById('cal-event-name').textContent = event.name || 'Kegiatan';
+        document.getElementById('cal-event-time').textContent = event.time || 'Waktu belum diatur';
+        document.getElementById('cal-event-location').textContent = event.location || 'Lokasi belum diatur';
+
+        const descWrap = document.getElementById('cal-event-desc-wrap');
+        if (event.description) {
+            descWrap.style.display = '';
+            document.getElementById('cal-event-desc').textContent = event.description;
+        } else {
+            descWrap.style.display = 'none';
+        }
+
+        document.getElementById('calendar-event-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeCalendarEventModal = function() {
+        document.getElementById('calendar-event-modal').classList.remove('active');
+        document.body.style.overflow = 'auto';
     };
 
     // === RENDER PENGURUS INTI (DENGAN DESKRIPSI) ===
@@ -2561,10 +2678,13 @@
                         ? `<div class="text-xs text-gray-500 mt-1" style="font-size:0.7rem; opacity:0.7;"><i class="fas fa-info-circle mr-1"></i>${m.description}</div>`
                         : '';
                     
+                    const regKey = `inti_${posId}_${id}`;
+                    window._memberRegistry[regKey] = { ...m, jabatan: displayTitle };
+
                     return `
                         <li>
                             <div class="member-info">
-                                <div class="member-avatar">${window.getInitials(m.name)}</div>
+                                <div class="member-avatar">${window.getAvatarHtml(m)}</div>
                                 <div class="member-details">
                                     <div class="member-name">${m.name || ''}</div>
                                     <div class="member-jabatan">${displayTitle}</div>
@@ -2572,7 +2692,7 @@
                                     ${descriptionHtml}
                                 </div>
                             </div>
-                            <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${displayTitle}\\nKelas: ${m.class || '-'}\\nDeskripsi: ${m.description || 'Tidak ada deskripsi'}')">Detail</button>
+                            <button class="view-detail" onclick="window.showMemberDetail('${regKey}')">Detail</button>
                         </li>
                     `;
                 }).join('');
@@ -2612,18 +2732,22 @@
                         ? `<div class="text-xs text-gray-500 mt-1" style="font-size:0.7rem; opacity:0.7;"><i class="fas fa-info-circle mr-1"></i>${m.description}</div>`
                         : '';
                     
+                    const displayJabatan = posId.replace(/_/g, ' ').toUpperCase();
+                    const regKey = `khusus_${posId}_${id}`;
+                    window._memberRegistry[regKey] = { ...m, jabatan: displayJabatan };
+
                     return `
                         <li>
                             <div class="member-info">
-                                <div class="member-avatar">${window.getInitials(m.name)}</div>
+                                <div class="member-avatar">${window.getAvatarHtml(m)}</div>
                                 <div class="member-details">
                                     <div class="member-name">${m.name || ''}</div>
-                                    <div class="member-jabatan">${posId.replace(/_/g, ' ').toUpperCase()}</div>
+                                    <div class="member-jabatan">${displayJabatan}</div>
                                     <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
                                     ${descriptionHtml}
                                 </div>
                             </div>
-                            <button class="view-detail" onclick="alert('${m.name}\\nJabatan: ${posId.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}\\nDeskripsi: ${m.description || 'Tidak ada deskripsi'}')">Detail</button>
+                            <button class="view-detail" onclick="window.showMemberDetail('${regKey}')">Detail</button>
                         </li>
                     `;
                 }).join('');
@@ -2684,18 +2808,20 @@
                         const descriptionHtml = m.description 
                             ? `<div class="text-xs text-gray-500" style="font-size:0.7rem; opacity:0.7;"><i class="fas fa-info-circle mr-1"></i>${m.description}</div>`
                             : '';
+                        const regKey = `divisi_${divisiKey}_${id}`;
+                        window._memberRegistry[regKey] = { ...m, jabatan: `Koordinator ${divisiKey.replace(/_/g, ' ').toUpperCase()}` };
                         
                         html += `
                             <li>
                                 <div class="member-info">
-                                    <div class="member-avatar" style="background: linear-gradient(145deg, #C5A059, #EAB308); color:white;">${window.getInitials(m.name)}</div>
+                                    <div class="member-avatar" style="background: linear-gradient(145deg, #C5A059, #EAB308); color:white;">${window.getAvatarHtml(m)}</div>
                                     <div class="member-details">
                                         <div class="member-name">${m.name || ''} <span style="font-size:0.7rem; background:gold; color:#000; padding:2px 8px; border-radius:20px;">Koordinator</span></div>
                                         <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
                                         ${descriptionHtml}
                                     </div>
                                 </div>
-                                <button class="view-detail" onclick="alert('${m.name}\\nJabatan: Koordinator ${divisiKey.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}\\nDeskripsi: ${m.description || 'Tidak ada deskripsi'}')">Detail</button>
+                                <button class="view-detail" onclick="window.showMemberDetail('${regKey}')">Detail</button>
                             </li>
                         `;
                     });
@@ -2716,18 +2842,20 @@
                         const descriptionHtml = m.description 
                             ? `<div class="text-xs text-gray-500" style="font-size:0.7rem; opacity:0.7;"><i class="fas fa-info-circle mr-1"></i>${m.description}</div>`
                             : '';
+                        const regKey = `divisi_${divisiKey}_${id}`;
+                        window._memberRegistry[regKey] = { ...m, jabatan: `Anggota ${divisiKey.replace(/_/g, ' ').toUpperCase()}` };
                         
                         html += `
                             <li style="border:1px solid var(--border-light); border-radius:12px; padding:10px; margin:0;">
                                 <div class="member-info">
-                                    <div class="member-avatar">${window.getInitials(m.name)}</div>
+                                    <div class="member-avatar">${window.getAvatarHtml(m)}</div>
                                     <div class="member-details">
                                         <div class="member-name">${m.name || ''}</div>
                                         <div class="member-class"><i class="fas fa-graduation-cap"></i> ${m.class || 'Kelas ?'}</div>
                                         ${descriptionHtml}
                                     </div>
                                 </div>
-                                <button class="view-detail" onclick="alert('${m.name}\\nAnggota ${divisiKey.replace(/_/g, ' ')}\\nKelas: ${m.class || '-'}\\nDeskripsi: ${m.description || 'Tidak ada deskripsi'}')">Detail</button>
+                                <button class="view-detail" onclick="window.showMemberDetail('${regKey}')">Detail</button>
                             </li>
                         `;
                     });
@@ -2859,7 +2987,7 @@
                             const li = document.createElement('li');
                             li.className = 'event-item';
                             li.onclick = () => { 
-                                alert(\`📅 Kegiatan: \${item.name}\n⏰ Waktu: \${item.time || '-'}\n📍 Lokasi: \${item.location || '-'}\n📝 \${item.description || ''}\`); 
+                                window.showCalendarEventDetail(item);
                             };
                             
                             const displayDate = new Date(item.date).toLocaleDateString('id-ID', { day:'numeric', month:'long' });
@@ -2951,7 +3079,17 @@
                     document.getElementById('modal-news-category').textContent = news.category || 'UMUM';
                     document.getElementById('modal-news-date').textContent = news.date || '';
                     document.getElementById('modal-news-author').textContent = news.author || '';
-                    document.getElementById('modal-news-content').innerHTML = news.fullContent || news.excerpt || '<p>Tidak ada konten.</p>';
+                    document.getElementById('modal-news-content').innerHTML = news.fullContent || news.content || news.excerpt || '<p>Tidak ada konten.</p>';
+
+                    const imgEl = document.getElementById('modal-news-image');
+                    if (news.imageUrl) {
+                        imgEl.src = news.imageUrl;
+                        imgEl.alt = news.title || '';
+                        imgEl.style.display = 'block';
+                    } else {
+                        imgEl.style.display = 'none';
+                    }
+
                     modal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 }
