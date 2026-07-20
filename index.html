@@ -1823,7 +1823,6 @@
      <li><i class="fas fa-envelope"></i> osimmamaarifrembang@gmail.com</li> 
      <li><i class="fab fa-instagram"></i> @osim.mamrembang</li> 
      <li><i class="fab fa-tiktok"></i> @osim.resmi</li> 
-     <li><i class="fab fa-whatsapp"></i> </li> 
     </ul> 
    </div> 
   </div> 
@@ -1928,7 +1927,7 @@
             <div class="struktur-icon"><i class="fas fa-sitemap"></i></div>
             <h2>Struktur Organisasi</h2>
         </div>
-        <p class="struktur-text">Dipimpin oleh Pengurus Inti (Ketua, Wakil Ketua, Sekretaris 1, Sekretaris 2, Bendahara 1, Bendahara 2). Didukung Bidang Khusus dan Divisi-Divisi dengan Koordinator + Anggota.</p>
+        <p class="struktur-text">Dibina oleh Pembina OSIM (guru pendamping). Dipimpin oleh Pengurus Inti (Ketua, Wakil Ketua, Sekretaris 1, Sekretaris 2, Bendahara 1, Bendahara 2). Didukung Bidang Khusus dan Divisi-Divisi dengan Koordinator + Anggota.</p>
         <div class="struktur-buttons">
             <button class="btn-primary" onclick="window.showPage('profil')"><i class="fas fa-user-friends"></i> Lihat Struktur</button>
             <button class="btn-outline" onclick="window.showPage('proker')"><i class="fas fa-list-check"></i> Program Kerja</button>
@@ -1941,7 +1940,6 @@
         <div class="kontak-links">
             <a href="mailto:osimmamaarifrembang@gmail.com" class="kontak-link"><i class="fas fa-envelope"></i> Email</a>
             <a href="https://www.instagram.com/osim.mamrembang" target="_blank" class="kontak-link"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="" target="_blank" class="kontak-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
         </div>
     </div>
   </div> 
@@ -2135,6 +2133,14 @@
     
     <!-- KATEGORI -->
     <div class="kategori-grid">
+      <!-- PEMBINA -->
+      <div class="kategori-card" onclick="window.showCategory('pembina', event)">
+          <div class="kategori-icon" style="background: linear-gradient(145deg, #0EA5E9, #0284C7);"><i class="fas fa-chalkboard-teacher"></i></div>
+          <h3>Pembina OSIM</h3>
+          <p>Guru pendamping / pembina organisasi</p>
+          <div class="kategori-link" style="color: #0EA5E9;"><i class="fas fa-arrow-right"></i> Klik detail</div>
+      </div>
+
       <!-- INTI -->
       <div class="kategori-card" onclick="window.showCategory('inti', event)">
           <div class="kategori-icon" style="background: linear-gradient(145deg, #1E40AF, #3B82F6);"><i class="fas fa-crown"></i></div>
@@ -2461,7 +2467,9 @@
         if (!detailArea) return;
         
         let config = {};
-        if (category === 'inti') {
+        if (category === 'pembina') {
+            config = { title: 'Pembina OSIM', color: '#0EA5E9', icon: 'fa-chalkboard-teacher', bgGradient: 'linear-gradient(145deg, #0EA5E9, #0284C7)', desc: 'Guru pendamping / pembina organisasi OSIM', dataId: 'pengurus-pembina-content' };
+        } else if (category === 'inti') {
             config = { title: 'Pengurus Inti', color: '#1E40AF', icon: 'fa-crown', bgGradient: 'linear-gradient(145deg, #1E40AF, #3B82F6)', desc: 'Pimpinan tertinggi OSIM (urutan: Ketua → Wakil → Sekretaris 1 → Sekretaris 2 → Bendahara 1 → Bendahara 2)', dataId: 'pengurus-inti-content' };
         } else if (category === 'khusus') {
             config = { title: 'Bidang Khusus', color: '#C5A059', icon: 'fa-star', bgGradient: 'linear-gradient(145deg, #C5A059, #EAB308)', desc: 'Tim dengan fungsi strategis', dataId: 'pengurus-khusus-content' };
@@ -2482,7 +2490,8 @@
             </div>
         `;
         
-        if (category === 'inti' && window.renderPengurusInti) window.renderPengurusInti();
+        if (category === 'pembina' && window.renderPengurusPembina) window.renderPengurusPembina();
+        else if (category === 'inti' && window.renderPengurusInti) window.renderPengurusInti();
         else if (category === 'khusus' && window.renderPengurusKhusus) window.renderPengurusKhusus();
         else if (category === 'divisi' && window.renderPengurusDivisi) window.renderPengurusDivisi();
         
@@ -2714,14 +2723,14 @@
     };
 
     // === RENDER PENGURUS KHUSUS (DENGAN DESKRIPSI) ===
-    window.renderPengurusKhusus = function() {
-        const container = document.getElementById('pengurus-khusus-content');
-        if (!container || !window.pengurusData?.khusus) return;
+    window.renderPengurusGeneric = function(categoryKey, containerId, iconClass, emptyMessage) {
+        const container = document.getElementById(containerId);
+        if (!container || !window.pengurusData?.[categoryKey]) return;
         
         container.innerHTML = '';
         let hasMembers = false;
         
-        Object.entries(window.pengurusData.khusus).forEach(([posId, pos]) => {
+        Object.entries(window.pengurusData[categoryKey]).forEach(([posId, pos]) => {
             if (pos.members && Object.keys(pos.members).length > 0) {
                 hasMembers = true;
                 const card = document.createElement('div');
@@ -2733,7 +2742,7 @@
                         : '';
                     
                     const displayJabatan = posId.replace(/_/g, ' ').toUpperCase();
-                    const regKey = `khusus_${posId}_${id}`;
+                    const regKey = `${categoryKey}_${posId}_${id}`;
                     window._memberRegistry[regKey] = { ...m, jabatan: displayJabatan };
 
                     return `
@@ -2754,7 +2763,7 @@
                 
                 card.innerHTML = `
                     <div class="position-header">
-                        <div class="position-icon"><i class="fas fa-star"></i></div>
+                        <div class="position-icon"><i class="fas ${iconClass}"></i></div>
                         <div class="position-title">${posId.replace(/_/g, ' ').toUpperCase()}</div>
                     </div>
                     <ul class="member-list">${members}</ul>
@@ -2764,8 +2773,16 @@
         });
         
         if (!hasMembers) {
-            container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; opacity:0.7;">Belum ada anggota bidang khusus</div>';
+            container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; opacity:0.7;">${emptyMessage}</div>`;
         }
+    };
+
+    window.renderPengurusPembina = function() {
+        window.renderPengurusGeneric('pembina', 'pengurus-pembina-content', 'fa-chalkboard-teacher', 'Belum ada data Pembina OSIM');
+    };
+
+    window.renderPengurusKhusus = function() {
+        window.renderPengurusGeneric('khusus', 'pengurus-khusus-content', 'fa-star', 'Belum ada anggota bidang khusus');
     };
 
     // === RENDER DIVISI (DENGAN DESKRIPSI) ===
